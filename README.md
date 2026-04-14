@@ -79,6 +79,13 @@ Then build APK pointing to that public URL.
 
 ## 4) Build release APK
 
+Set Java in the current shell first:
+
+```bash
+export JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
+export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"
+```
+
 ```bash
 cd frontend
 flutter build apk --release \
@@ -90,6 +97,13 @@ APK path:
 
 ```text
 frontend/build/app/outputs/flutter-apk/app-release.apk
+```
+
+Shortcut:
+
+```bash
+cd frontend
+./build_friend_apk.sh https://YOUR_PUBLIC_BACKEND_URL wss://YOUR_PUBLIC_BACKEND_URL
 ```
 
 ## 5) Friend test checklist

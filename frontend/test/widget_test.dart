@@ -6,7 +6,8 @@ void main() {
     await tester.pumpWidget(const JudgementApp());
 
     expect(find.text('Judgement'), findsOneWidget);
-    expect(find.text('Multiplayer Kachuful'), findsOneWidget);
+    expect(find.text('Create Room'), findsOneWidget);
+    expect(find.text('Join Room'), findsOneWidget);
     expect(find.textContaining('API:'), findsOneWidget);
     expect(find.textContaining('WS:'), findsOneWidget);
   });

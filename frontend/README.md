@@ -24,6 +24,15 @@ flutter test
 
 ## Build APK for friend testing
 
+If Java is not available in your shell, set it first:
+
+```bash
+export JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
+export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"
+```
+
+Then build:
+
 ```bash
 flutter build apk --release \
 	--dart-define=API_BASE_URL=https://YOUR_PUBLIC_BACKEND_URL \
@@ -34,6 +43,12 @@ APK output:
 
 ```text
 build/app/outputs/flutter-apk/app-release.apk
+```
+
+One-command helper:
+
+```bash
+./build_friend_apk.sh https://YOUR_PUBLIC_BACKEND_URL wss://YOUR_PUBLIC_BACKEND_URL
 ```
 
 ## Important for internet multiplayer

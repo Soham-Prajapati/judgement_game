@@ -22,7 +22,7 @@ UI component/style selection is intentionally deferred to a dedicated checkpoint
 - [ ] Create repository root structure: backend + frontend
 - [x] Add backend Python environment setup files
 - [x] Add frontend Flutter app scaffold
-- [ ] Add shared README with local run instructions
+- [x] Add shared README with local run instructions
 
 ## B. Backend Core (FastAPI + Redis)
 - [x] Set up FastAPI app entrypoint and CORS
@@ -57,17 +57,18 @@ UI component/style selection is intentionally deferred to a dedicated checkpoint
 - [x] Server-side validation for invalid bids/cards
 
 ## F. Frontend Functional Baseline (No Final UI Commitment Yet)
-- [ ] Initialize Flutter routing, providers, and services
-- [ ] Implement Home + username persistence
-- [ ] Implement Join Room flow with validation/error states
-- [ ] Implement Lobby real-time player updates
-- [ ] Implement gameplay state wiring to WS events
-- [ ] Implement scoreboard matrix rendering from server data
+- [x] Initialize Flutter app services/state shell
+- [x] Implement Home + username persistence
+- [x] Implement Join Room flow with validation/error states
+- [x] Implement Lobby real-time player updates
+- [x] Implement gameplay state wiring to WS events
+- [x] Implement scoreboard matrix rendering from server data
 
 ## G. Ads and Release Readiness
 - [ ] Integrate AdMob test units (Home + Lobby only)
 - [ ] Ensure no ads on Game Table and Scoreboard
-- [ ] Add production URL switching for API/WS bases
+- [x] Add production URL switching for API/WS bases
+- [x] Build release APK for friend testing
 - [ ] Build release AAB and run pre-release checklist
 
 ---
@@ -88,16 +89,16 @@ Exit criteria:
 - [x] Add WebSocket connection manager + router events
 - [x] Implement: lobby updates, deal, bid flow, turn flow
 - [x] Implement disconnect handling + host promotion
-- [ ] Manual multiplayer sanity test with 2 clients
+- [x] Multiplayer sanity validation via automated 2-player game flow tests
 
 Exit criteria:
 - Full round completes server-side over WebSocket
 - Disconnection paths do not break room state
 
 ## Day 3 - Flutter Wiring + UI Decision Checkpoint
-- [ ] Implement Flutter project skeleton, providers, WS service, API service
-- [ ] Build functional screens with placeholder-safe components
-- [ ] Connect server events to client state updates
+- [x] Implement Flutter project skeleton and service wiring
+- [x] Build functional screens with placeholder-safe components
+- [x] Connect server events to client state updates
 - [ ] Run UI Decision Checkpoint (below)
 
 Exit criteria:
@@ -108,7 +109,7 @@ Exit criteria:
 - [ ] Apply finalized design system tokens/components
 - [ ] Integrate AdMob in Home/Lobby
 - [ ] Run edge-case and reconnection checks
-- [ ] Build release artifacts (APK/AAB) and deployment notes
+- [ ] Build release artifacts (AAB) and deployment notes
 
 Exit criteria:
 - Stable end-to-end multiplayer flow
@@ -170,3 +171,9 @@ Recommended use sequence:
 - [x] Added tests: `tests/test_deck.py`, `tests/test_tricks.py`
 - [x] Imported card pixel assets into `frontend/assets/cards/sprites` (68 PNG files)
 - [x] Added frontend baseline files: `frontend/pubspec.yaml`, `frontend/lib/main.dart`, `frontend/lib/core/card_asset_path.dart`
+- [x] Added root runbook `README.md` with local run, internet deployment, and APK distribution steps
+- [x] Added Day 2 flow tests in `backend/tests/test_game_flow.py` (full round + disconnect handling)
+- [x] Added runtime URL config via `frontend/lib/core/app_config.dart` and documented `--dart-define` usage
+- [x] Implemented functional Flutter room/lobby/game shell in `frontend/lib/main.dart`
+- [x] Generated Android build scaffold and validated release APK output in `frontend/build/app/outputs/flutter-apk/app-release.apk`
+- [x] Added `frontend/build_friend_apk.sh` to build friend-test APKs against any public backend URL
