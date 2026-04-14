@@ -10,8 +10,26 @@ fi
 API_BASE_URL="$1"
 WS_BASE_URL="$2"
 
-export JAVA_HOME="/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
-export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"
+if [[ -z "${JAVA_HOME:-}" ]]; then
+  if [[ -d "/Applications/Android Studio.app/Contents/jbr/Contents/Home" ]]; then
+    export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+  elif command -v /usr/libexec/java_home >/dev/null 2>&1; then
+    JAVA_CANDIDATE="$(/usr/libexec/java_home 2>/dev/null || true)"
+    if [[ -n "$JAVA_CANDIDATE" ]]; then
+      export JAVA_HOME="$JAVA_CANDIDATE"
+    fi
+  fi
+fi
+
+if [[ -n "${JAVA_HOME:-}" ]]; then
+  export PATH="$JAVA_HOME/bin:$PATH"
+fi
+
+if ! command -v java >/dev/null 2>&1; then
+  echo "Java runtime not found in this shell."
+  echo "Open Android Studio once or set JAVA_HOME, then run again."
+  exit 1
+fi
 
 flutter pub get
 flutter test
