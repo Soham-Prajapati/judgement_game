@@ -119,6 +119,35 @@ class GameService:
         state = self._require_state(room_code)
         if state.status != "bidding":
             raise ValueError("invalid_phase")
+
+        # If disconnected users are currently up to bid, auto-skip them first.
+        while state.bid_turn_index < len(state.bid_order):
+            candidate = state.bid_order[state.bid_turn_index]
+            if candidate not in state.disconnected:
+                break
+            state.bids[candidate] = 0
+            state.bid_turn_index += 1
+
+        if state.bid_turn_index >= len(state.bid_order):
+            state.status = "playing"
+            first_player = self._next_connected_player(
+                state,
+                state.bid_order[0],
+                include_current=True,
+            )
+            state.current_player = first_player
+            return {
+                "server_bid_update": {
+                    "type": "server_bid_update",
+                    "bids": state.bids.copy(),
+                },
+                "server_turn_update": {
+                    "type": "server_turn_update",
+                    "current_player": first_player,
+                    "trick_so_far": [],
+                },
+            }
+
         if state.bid_order[state.bid_turn_index] != username:
             raise ValueError("not_your_turn")
 

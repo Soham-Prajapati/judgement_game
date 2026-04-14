@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/app_config.dart';
+import 'core/card_asset_path.dart';
+
 void main() {
   runApp(const ProviderScope(child: JudgementApp()));
 }
@@ -54,6 +57,25 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 24),
               Text(
                 'Backend WS protocol is implemented. UI selection remains deferred by plan.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 96,
+                child: Image.asset(
+                  cardBackAsset(1),
+                  fit: BoxFit.contain,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'API: ${AppConfig.apiBaseUrl}',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              Text(
+                'WS: ${AppConfig.wsBaseUrl}',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
