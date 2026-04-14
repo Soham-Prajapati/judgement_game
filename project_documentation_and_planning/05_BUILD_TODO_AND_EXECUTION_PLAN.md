@@ -20,25 +20,25 @@ UI component/style selection is intentionally deferred to a dedicated checkpoint
 
 ## A. Project Foundation
 - [ ] Create repository root structure: backend + frontend
-- [ ] Add backend Python environment setup files
+- [x] Add backend Python environment setup files
 - [ ] Add frontend Flutter app scaffold
 - [ ] Add shared README with local run instructions
 
 ## B. Backend Core (FastAPI + Redis)
-- [ ] Set up FastAPI app entrypoint and CORS
-- [ ] Add health endpoint
-- [ ] Implement room creation endpoint with 6-char code generation
-- [ ] Implement room exists/check endpoint
-- [ ] Add async Redis client and room TTL handling
-- [ ] Add WebSocket router with room/user connection path
-- [ ] Add connection manager (per-room sockets)
+- [x] Set up FastAPI app entrypoint and CORS
+- [x] Add health endpoint
+- [x] Implement room creation endpoint with 6-char code generation
+- [x] Implement room exists/check endpoint
+- [x] Add async Redis client and room TTL handling
+- [x] Add WebSocket router with room/user connection path
+- [x] Add connection manager (per-room sockets)
 
 ## C. Game Engine (Pure Python)
-- [ ] Implement deck creation, shuffle, and deal
-- [ ] Implement trump rotation module (spades -> diamonds -> hearts -> clubs)
-- [ ] Implement bidding rules with illegal last-bid value
+- [x] Implement deck creation, shuffle, and deal
+- [x] Implement trump rotation module (spades -> diamonds -> hearts -> clubs)
+- [x] Implement bidding rules with illegal last-bid value
 - [ ] Implement trick winner logic (lead suit + trump precedence)
-- [ ] Implement round scoring (+10 exact else 0)
+- [x] Implement round scoring (+10 exact else 0)
 - [ ] Add unit tests for all game modules
 
 ## D. Real-Time Game Flow
@@ -75,10 +75,10 @@ UI component/style selection is intentionally deferred to a dedicated checkpoint
 ## 3) 4-Day Execution Plan
 
 ## Day 1 - Backend Skeleton + Game Rules Core
-- [ ] Create backend folder structure and baseline files
-- [ ] Implement: deck, trump, bidding, scoring modules
-- [ ] Add unit tests for these modules
-- [ ] Validate all rule logic with pytest
+- [x] Create backend folder structure and baseline files
+- [x] Implement: deck, trump, bidding, scoring modules
+- [x] Add unit tests for these modules
+- [x] Validate all rule logic with pytest
 
 Exit criteria:
 - Game rule modules pass tests
@@ -157,6 +157,6 @@ Recommended use sequence:
 
 ## 6) Immediate Next Build Actions
 
-- [ ] Scaffold backend directories and baseline files now
-- [ ] Implement first test-backed game modules: trump, bidding, scoring
-- [ ] Wire minimal FastAPI routes: /health, /room/create, /room/{code}/exists
+- [x] Scaffold backend directories and baseline files now
+- [x] Implement first test-backed game modules: trump, bidding, scoring
+- [x] Wire minimal FastAPI routes: /health, /room/create, /room/{code}/exists
