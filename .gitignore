@@ -5,3 +5,11 @@ __pycache__/
 # Local virtual environments
 .venv/
 venv/
+
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/.metadata

@@ -21,7 +21,7 @@ UI component/style selection is intentionally deferred to a dedicated checkpoint
 ## A. Project Foundation
 - [ ] Create repository root structure: backend + frontend
 - [x] Add backend Python environment setup files
-- [ ] Add frontend Flutter app scaffold
+- [x] Add frontend Flutter app scaffold
 - [ ] Add shared README with local run instructions
 
 ## B. Backend Core (FastAPI + Redis)
@@ -37,24 +37,24 @@ UI component/style selection is intentionally deferred to a dedicated checkpoint
 - [x] Implement deck creation, shuffle, and deal
 - [x] Implement trump rotation module (spades -> diamonds -> hearts -> clubs)
 - [x] Implement bidding rules with illegal last-bid value
-- [ ] Implement trick winner logic (lead suit + trump precedence)
+- [x] Implement trick winner logic (lead suit + trump precedence)
 - [x] Implement round scoring (+10 exact else 0)
-- [ ] Add unit tests for all game modules
+- [x] Add unit tests for all game modules
 
 ## D. Real-Time Game Flow
-- [ ] Implement server events for lobby state updates
-- [ ] Implement bidding phase orchestration
-- [ ] Implement turn-based card play orchestration
-- [ ] Implement trick resolution + trick winner updates
-- [ ] Implement round end + cumulative score updates
-- [ ] Implement game over + rematch flow
+- [x] Implement server events for lobby state updates
+- [x] Implement bidding phase orchestration
+- [x] Implement turn-based card play orchestration
+- [x] Implement trick resolution + trick winner updates
+- [x] Implement round end + cumulative score updates
+- [x] Implement game over + rematch flow
 
 ## E. Resilience and Edge Cases
-- [ ] Host migration when host disconnects
-- [ ] Auto-skip disconnected players in active game
-- [ ] Room cleanup on empty room
+- [x] Host migration when host disconnects
+- [x] Auto-skip disconnected players in active game
+- [x] Room cleanup on empty room
 - [ ] Reconnect support contract for clients
-- [ ] Server-side validation for invalid bids/cards
+- [x] Server-side validation for invalid bids/cards
 
 ## F. Frontend Functional Baseline (No Final UI Commitment Yet)
 - [ ] Initialize Flutter routing, providers, and services
@@ -85,9 +85,9 @@ Exit criteria:
 - Room create/check endpoints respond correctly
 
 ## Day 2 - WebSocket Game Orchestration
-- [ ] Add WebSocket connection manager + router events
-- [ ] Implement: lobby updates, deal, bid flow, turn flow
-- [ ] Implement disconnect handling + host promotion
+- [x] Add WebSocket connection manager + router events
+- [x] Implement: lobby updates, deal, bid flow, turn flow
+- [x] Implement disconnect handling + host promotion
 - [ ] Manual multiplayer sanity test with 2 clients
 
 Exit criteria:
@@ -160,3 +160,13 @@ Recommended use sequence:
 - [x] Scaffold backend directories and baseline files now
 - [x] Implement first test-backed game modules: trump, bidding, scoring
 - [x] Wire minimal FastAPI routes: /health, /room/create, /room/{code}/exists
+
+## 7) Build Progress Delta (2026-04-14)
+
+- [x] Added `game/tricks.py` with lead-suit/trump winner logic and playable-card filtering
+- [x] Added `services/game_service.py` for round orchestration (`start_game`, bidding, play, round end, rematch)
+- [x] Upgraded `routers/websocket.py` to contract events (`client_start_game`, `client_place_bid`, `client_play_card`, `client_next_round`, `client_rematch`)
+- [x] Added Redis-backed room join/leave lifecycle and host migration in `services/room_service.py`
+- [x] Added tests: `tests/test_deck.py`, `tests/test_tricks.py`
+- [x] Imported card pixel assets into `frontend/assets/cards/sprites` (68 PNG files)
+- [x] Added frontend baseline files: `frontend/pubspec.yaml`, `frontend/lib/main.dart`, `frontend/lib/core/card_asset_path.dart`
