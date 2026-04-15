@@ -1,50 +1,36 @@
 # Project Judgement (Kachuful)
 
-A real-time multiplayer mobile card game built with React Native and FastAPI.
+A real-time multiplayer mobile card game built with Expo (React Native) and FastAPI.
 
 ## Tech Stack
-- **Frontend:** React Native (TypeScript) + Pixel Art Assets
+- **Frontend:** Expo / React Native (TypeScript) + Pixel Art Assets
 - **Backend:** FastAPI (Python)
 - **Real-time:** WebSockets
 - **Store:** Redis (Ephemeral state)
 
 ## Getting Started
 
-### Prerequisites
+### 1. Prerequisites
 - Python 3.11+
 - Node.js 20+
 - Redis 7.x (`brew install redis`)
-- Android Emulator or Physical Device
+- **Mobile Phone:** Install the **Expo Go** app from the App Store or Play Store.
 
-### Quick Run
-The easiest way to run the project is using the root script:
+### 2. Quick Run (Recommended)
+1. Start Redis: `brew services start redis`
+2. Run the master script: `./run.sh`
+3. Select **Option 2** (Start Frontend).
+4. A **QR Code** will appear in your terminal.
+5. Open the **Expo Go** app on your phone and **Scan the QR Code**.
 
-```bash
-./run.sh
-```
+---
 
-### Manual Setup
-
-#### 1. Start Redis
-```bash
-brew services start redis
-```
-
-#### 2. Start Backend
-```bash
-cd backend
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python3 main.py
-```
-
-#### 3. Start Frontend
-```bash
-cd frontend
-npm install
-npx react-native run-android
-```
+## Playing with Friends (Public Hosting)
+If your backend is hosted on Railway:
+1. Open `frontend/src/core/constants.ts`.
+2. Update `apiBaseUrl` and `wsBaseUrl` to your Railway URLs.
+3. Run `npx expo start` in the `frontend` folder.
+4. Anyone with the Expo Go app can scan your QR code and play with you!
 
 ## Game Rules
 - 2-6 players.

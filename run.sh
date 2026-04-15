@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Project Judgement - Dev Runner
+# Project Judgement - Dev Runner (EXPO VERSION)
 # Colors for output
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-echo -e "${BLUE}=== Project Judgement Control Center ===${NC}"
+echo -e "${BLUE}=== Project Judgement Control Center (Expo) ===${NC}"
 
 # 1. Check Redis
 if ! lsof -i:6379 > /dev/null; then
@@ -31,7 +31,7 @@ fi
 # 3. Choose Action
 echo -e "\nWhat would you like to do?"
 echo "1) Start Backend Server (FastAPI)"
-echo "2) Start Frontend (Android)"
+echo "2) Start Frontend (Expo / Expo Go)"
 echo "3) Start Both (Background)"
 echo "q) Quit"
 read -p "Selection: " choice
@@ -42,9 +42,13 @@ case $choice in
         python3 main.py
         ;;
     2)
-        echo -e "${GREEN}[*] Starting React Native Frontend...${NC}"
+        echo -e "${GREEN}[*] Starting Expo Frontend...${NC}"
         cd ../frontend
-        npx react-native run-android
+        # Set IP for Local Testing if needed
+        IP=$(ipconfig getifaddr en0)
+        sed -i '' "s|apiBaseUrl: '.*'|apiBaseUrl: 'http://$IP:8000'|g" src/core/constants.ts
+        sed -i '' "s|wsBaseUrl: '.*'|wsBaseUrl: 'ws://$IP:8000'|g" src/core/constants.ts
+        npx expo start
         ;;
     3)
         echo -e "${GREEN}[*] Starting Backend in background...${NC}"
@@ -52,9 +56,12 @@ case $choice in
         BACKEND_PID=$!
         echo -e "${GREEN}[*] Backend PID: $BACKEND_PID. Logs at backend.log${NC}"
         
-        echo -e "${GREEN}[*] Starting Frontend...${NC}"
+        echo -e "${GREEN}[*] Starting Expo Frontend...${NC}"
         cd ../frontend
-        npx react-native run-android
+        IP=$(ipconfig getifaddr en0)
+        sed -i '' "s|apiBaseUrl: '.*'|apiBaseUrl: 'http://$IP:8000'|g" src/core/constants.ts
+        sed -i '' "s|wsBaseUrl: '.*'|wsBaseUrl: 'ws://$IP:8000'|g" src/core/constants.ts
+        npx expo start
         
         echo -e "${BLUE}Press Ctrl+C to stop the backend when finished.${NC}"
         trap "kill $BACKEND_PID; exit" INT
