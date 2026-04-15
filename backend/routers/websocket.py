@@ -45,6 +45,10 @@ async def websocket_endpoint(websocket: WebSocket, room_code: str, username: str
             data = await websocket.receive_text()
             event = json.loads(data)
             
+            # Re-fetch room meta for each event to ensure fresh state
+            room_meta = await room_service.get_room_meta(room_code)
+            players = await room_service.redis_client.lrange(f"room:{room_code}:players", 0, -1)
+
             if event["type"] == "client_start_game":
                 # Verify sender is host
                 if username == room_meta.get("host"):
@@ -65,17 +69,43 @@ async def websocket_endpoint(websocket: WebSocket, room_code: str, username: str
                     # Also broadcast bid request for first bidder
                     await manager.broadcast({
                         "type": "server_bid_request",
-                        "current_bidder": players[0], # First player always starts for now
+                        "current_bidder": players[0],
                         "bids_so_far": {},
-                        "illegal_bid": None # Not last bidder yet
+                        "illegal_bid": None
                     }, room_code)
                 else:
                     await websocket.send_json({"type": "server_error", "message": "Only host can start game"})
 
+            elif event["type"] == "client_place_bid":
+                bid = event.get("bid")
+                success, result = await game_service.place_bid(room_code, username, bid)
+                
+                if success:
+                    # Broadcast bid update
+                    await manager.broadcast({
+                        "type": "server_bid_update",
+                        "bids": result["bids"]
+                    }, room_code)
+                    
+                    if result["type"] == "next_bidder":
+                        await manager.broadcast({
+                            "type": "server_bid_request",
+                            "current_bidder": result["next_bidder"],
+                            "bids_so_far": result["bids"],
+                            "illegal_bid": result["illegal_bid"]
+                        }, room_code)
+                    else:
+                        # Bidding over, transition to playing
+                        await manager.broadcast({
+                            "type": "server_turn_update",
+                            "current_player": players[0],
+                            "trick_so_far": []
+                        }, room_code)
+                else:
+                    await websocket.send_json({"type": "server_error", "message": result})
+
     except WebSocketDisconnect:
         manager.disconnect(websocket, room_code, username)
-        # In real app, we'd handle more complex disconnect logic (host migration)
-        # but for now just broadcast left
         updated_players = await room_service.redis_client.lrange(f"room:{room_code}:players", 0, -1)
         await manager.broadcast({
             "type": "server_player_left",
