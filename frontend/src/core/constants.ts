@@ -1,4 +1,8 @@
 export const AppConstants = {
+  // Use your hosted URL here (e.g., 'https://judgement-production.up.railway.app')
+  // If empty, the build script will prompt for it.
+  productionUrl: '', 
+  
   apiBaseUrl: 'http://10.0.2.2:8000',
   wsBaseUrl: 'ws://10.0.2.2:8000',
 

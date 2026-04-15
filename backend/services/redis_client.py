@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Use REDIS_URL if provided (Railway/Render), else fallback to local
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
 class RedisClient:
@@ -12,6 +13,8 @@ class RedisClient:
 
     async def connect(self):
         if not self.redis:
+            # For production (SSL), some providers need ssl_cert_reqs=None
+            # We use from_url which handles rediss:// automatically
             self.redis = redis.from_url(REDIS_URL, decode_responses=True)
 
     async def close(self):
@@ -31,8 +34,10 @@ class RedisClient:
     async def exists(self, key):
         return await self.redis.exists(key)
 
-    async def hset(self, key, mapping):
-        await self.redis.hset(key, mapping=mapping)
+    async def hset(self, key, mapping=None, key_name=None, value=None):
+        if mapping:
+            return await self.redis.hset(key, mapping=mapping)
+        return await self.redis.hset(key, key_name, value)
 
     async def hgetall(self, key):
         return await self.redis.hgetall(key)
