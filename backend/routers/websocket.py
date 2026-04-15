@@ -6,9 +6,6 @@ import json
 router = APIRouter(tags=["websocket"])
 
 async def broadcast_deal(room_code: str, players: list, game_state: dict):
-    """
-    Helper to broadcast private deals to each player.
-    """
     for p in players:
         if p in manager.user_connections.get(room_code, {}):
             p_socket = manager.user_connections[room_code][p]
@@ -38,7 +35,7 @@ async def websocket_endpoint(websocket: WebSocket, room_code: str, username: str
             manager.disconnect(websocket, room_code, username)
             return
         await room_service.redis_client.redis.rpush(f"room:{room_code}:players", username)
-        players.append(username)
+        players = await room_service.redis_client.lrange(f"room:{room_code}:players", 0, -1)
 
     room_meta = await room_service.get_room_meta(room_code)
     await manager.broadcast({
@@ -119,8 +116,26 @@ async def websocket_endpoint(websocket: WebSocket, room_code: str, username: str
 
     except WebSocketDisconnect:
         manager.disconnect(websocket, room_code, username)
-        updated_players = await room_service.redis_client.lrange(f"room:{room_code}:players", 0, -1)
-        await manager.broadcast({"type": "server_player_left", "username": username, "players": updated_players}, room_code)
+        await room_service.remove_player(room_code, username)
+        players = await room_service.redis_client.lrange(f"room:{room_code}:players", 0, -1)
+        
+        if not players:
+            await room_service.delete_room(room_code)
+            return
+
+        room_meta = await room_service.get_room_meta(room_code)
+        new_host = room_meta.get("host")
+        
+        if username == room_meta.get("host"):
+            new_host = players[0]
+            await room_service.update_room_meta(room_code, {"host": new_host})
+
+        await manager.broadcast({
+            "type": "server_player_left",
+            "username": username,
+            "players": players,
+            "new_host": new_host
+        }, room_code)
     except Exception as e:
         print(f"WS Error: {e}")
         manager.disconnect(websocket, room_code, username)

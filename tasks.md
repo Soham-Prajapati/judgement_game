@@ -32,11 +32,11 @@
 - [x] Implement game over + rematch flow
 
 ## E. Resilience and Edge Cases
-- [ ] Host migration when host disconnects
-- [ ] Auto-skip disconnected players in active game
-- [ ] Room cleanup on empty room
+- [x] Host migration when host disconnects
+- [/] Auto-skip disconnected players in active game
+- [x] Room cleanup on empty room
 - [ ] Reconnect support contract for clients
-- [ ] Server-side validation for invalid bids/cards
+- [x] Server-side validation for invalid bids/cards
 
 ## F. Frontend Functional Baseline (React Native)
 - [x] Initialize React Native navigation, store, and services
