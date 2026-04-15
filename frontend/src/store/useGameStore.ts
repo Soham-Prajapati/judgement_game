@@ -7,6 +7,7 @@ interface GameState {
   trumpSuit: string | null;
   hand: Card[];
   bids: Record<string, number>;
+  tricksWon: Record<string, number>;
   currentBidder: string | null;
   illegalBid: number | null;
   currentPlayer: string | null;
@@ -20,6 +21,7 @@ interface GameState {
   setRoundInfo: (num: number, trump: string) => void;
   setHand: (hand: Card[]) => void;
   setBids: (bids: Record<string, number>) => void;
+  setTricksWon: (tricks: Record<string, number>) => void;
   setBidRequest: (bidder: string, illegal: number | null) => void;
   setTurnUpdate: (player: string, trick: Card[]) => void;
   setTrickResult: (winner: string, cards: Card[]) => void;
@@ -33,6 +35,7 @@ export const useGameStore = create<GameState>((set) => ({
   trumpSuit: null,
   hand: [],
   bids: {},
+  tricksWon: {},
   currentBidder: null,
   illegalBid: null,
   currentPlayer: null,
@@ -46,9 +49,17 @@ export const useGameStore = create<GameState>((set) => ({
   setRoundInfo: (num, trump) => set({ roundNum: num, trumpSuit: trump }),
   setHand: (hand) => set({ hand }),
   setBids: (bids) => set({ bids }),
+  setTricksWon: (tricks) => set({ tricksWon: tricks }),
   setBidRequest: (bidder, illegal) => set({ currentBidder: bidder, illegalBid: illegal }),
   setTurnUpdate: (player, trick) => set({ currentPlayer: player, trickSoFar: trick, status: 'playing' }),
-  setTrickResult: (winner, cards) => set({ lastTrickResult: { winner, cards }, trickSoFar: [] }),
+  setTrickResult: (winner, cards) => set((state) => ({ 
+    lastTrickResult: { winner, cards }, 
+    trickSoFar: [],
+    tricksWon: {
+      ...state.tricksWon,
+      [winner]: (state.tricksWon[winner] || 0) + 1
+    }
+  })),
   setRoundEnd: (num, scores, totals, over, winner) => set({
     status: over ? 'game_over' : 'round_end',
     roundNum: num,
@@ -62,6 +73,7 @@ export const useGameStore = create<GameState>((set) => ({
     trumpSuit: null,
     hand: [],
     bids: {},
+    tricksWon: {},
     currentBidder: null,
     illegalBid: null,
     currentPlayer: null,

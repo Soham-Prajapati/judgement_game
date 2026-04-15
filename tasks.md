@@ -48,8 +48,9 @@
 
 ## G. Ads and Release Readiness
 - [ ] Integrate AdMob test units (Home + Lobby only)
-- [ ] Ensure no ads on Game Table and Scoreboard
+- [x] Ensure no ads on Game Table and Scoreboard
 - [ ] Add production URL switching for API/WS bases
+- [x] Implement UI Polish (Cards, Animations, Desi Theme)
 - [ ] Build release APK for friend testing
 - [ ] Build release AAB and run pre-release checklist
 

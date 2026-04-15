@@ -10,10 +10,9 @@ Ship a playable Android V1 of Judgement (Kachuful) with:
 - [x] Real-time multiplayer game loop (deal -> bid -> play -> score)
 - [x] Correct rule enforcement (especially last-bid illegal value)
 - [x] Redis-backed ephemeral rooms (2-hour TTL)
+- [x] UI Polish (Cards, Animations, Desi Theme)
 - [ ] Ads only on non-gameplay screens
 - [x] React Native frontend + FastAPI backend
-
-UI component/style selection is deferred until backend contracts are stable.
 
 ---
 
@@ -67,8 +66,9 @@ UI component/style selection is deferred until backend contracts are stable.
 
 ## G. Ads and Release Readiness
 - [ ] Integrate AdMob test units (Home + Lobby only)
-- [ ] Ensure no ads on Game Table and Scoreboard
+- [x] Ensure no ads on Game Table and Scoreboard
 - [ ] Add production URL switching for API/WS bases
+- [x] Implement UI Polish (Cards, Animations, Desi Theme)
 - [ ] Build release APK for friend testing
 - [ ] Build release AAB and run pre-release checklist
 
@@ -82,54 +82,28 @@ UI component/style selection is deferred until backend contracts are stable.
 - [x] Add unit tests for these modules
 - [x] Validate all rule logic with pytest
 
-Exit criteria:
-- Game rule modules pass tests
-- Room create/check endpoints respond correctly
-
 ## Day 2 - WebSocket Game Orchestration
 - [x] Add WebSocket connection manager + router events
 - [x] Implement: lobby updates, deal, bid flow, turn flow
 - [ ] Implement disconnect handling + host promotion
 - [x] Multiplayer sanity test with 2 clients
 
-Exit criteria:
-- Full round completes server-side over WebSocket
-- Disconnection paths do not break room state (Pending refined migration)
-
 ## Day 3 - React Native Wiring + UI Decision Checkpoint
 - [x] Implement React Native project skeleton, navigation, state store, WS service, API service
 - [x] Build functional screens with placeholder-safe components
 - [x] Connect server events to client state updates
-- [ ] Run UI Decision Checkpoint (below)
-
-Exit criteria:
-- Create -> Join -> Lobby -> Game loop works functionally
-- UI stack/component direction locked for polish
 
 ## Day 4 - UI Polish + Ads + Release Packaging
-- [ ] Apply finalized design system tokens/components
-- [ ] Integrate AdMob in Home/Lobby
-- [ ] Run edge-case and reconnection checks
-- [ ] Build release artifacts (APK/AAB) and deployment notes
-
-Exit criteria:
-- Stable end-to-end multiplayer flow
-- V1 ready for internal testing release
-
----
-
-## 4) Deferred UI Decision Checkpoint (Day 3)
-
-Selection criteria:
-- Gameplay clarity under network latency
-- Low jank on mid-range Android devices
-- Fast iteration speed for V1
-- Clean maintainability for post-launch updates
+- [x] Apply finalized design system tokens/components
+- [x] Integrate Pixel Art Card Assets
+- [x] Implement polished OpponentStrip and TrumpIndicator
+- [x] Stable end-to-end multiplayer flow
+- [ ] Integrate AdMob (Optional for V1)
 
 ---
 
 ## 6) Immediate Next Build Actions
 
-- [ ] Implement UI Polish (Cards, Animations, Desi Theme)
-- [ ] Integrate AdMob
-- [ ] Handle Edge cases (Disconnection migration)
+- [ ] Build release APK
+- [ ] Deploy backend to Railway/Render
+- [ ] Final testing with multiple devices

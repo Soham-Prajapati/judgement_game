@@ -5,11 +5,13 @@ import { useGameStore } from '../store/useGameStore';
 import { useUserStore } from '../store/useUserStore';
 import { useRoomStore } from '../store/useRoomStore';
 import { socketClient } from '../services/socketClient';
-import { SuitNames } from '../models/card';
+import CardView from '../components/CardView';
+import TrumpIndicator from '../components/TrumpIndicator';
+import OpponentStrip from '../components/OpponentStrip';
 
 const GameScreen = ({ navigation }: any) => {
   const { 
-    status, roundNum, trumpSuit, hand, bids, 
+    status, roundNum, trumpSuit, hand, bids, tricksWon,
     currentBidder, illegalBid, currentPlayer, 
     trickSoFar, lastTrickResult 
   } = useGameStore();
@@ -36,34 +38,41 @@ const GameScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       {/* Top Bar - Opponents */}
-      <View style={styles.header}>
-        <Text style={Typography.h3}>Round {roundNum}</Text>
-        <View style={styles.trumpBadge}>
-          <Text style={styles.trumpText}>TRUMP: {trumpSuit ? SuitNames[trumpSuit as keyof typeof SuitNames] : '?'}</Text>
-        </View>
+      <OpponentStrip 
+        players={players}
+        currentPlayer={status === 'playing' ? currentPlayer : currentBidder}
+        bids={bids}
+        tricksWon={tricksWon}
+        myUsername={username}
+      />
+
+      <View style={styles.subHeader}>
+        <Text style={styles.roundText}>ROUND {roundNum}</Text>
+        <TrumpIndicator suit={trumpSuit} />
       </View>
 
       {/* Middle - Trick Area */}
       <View style={styles.playArea}>
-        <Text style={[Typography.body, { color: Colors.mutedText }]}>
-          {status === 'playing' ? `${currentPlayer}'s turn` : 'Bidding phase...'}
-        </Text>
+        {status === 'bidding' && !isMyTurnToBid && (
+          <Text style={styles.waitingText}>Waiting for {currentBidder} to bid...</Text>
+        )}
+        
         <View style={styles.trickPile}>
           {trickSoFar.map((card, idx) => (
-            <View key={idx} style={styles.playedCard}>
-              <Text style={styles.cardText}>{card.rank}{card.suit}</Text>
-            </View>
+            <CardView key={idx} card={card} size="medium" style={styles.playedCard} />
           ))}
         </View>
-        {lastTrickResult && (
+        
+        {lastTrickResult && trickSoFar.length === 0 && (
           <Text style={styles.winnerText}>{lastTrickResult.winner} won the last trick</Text>
         )}
       </View>
 
-      {/* Bidding Overlay (Functional Placeholder) */}
+      {/* Bidding Overlay */}
       {isMyTurnToBid && (
         <View style={styles.biddingOverlay}>
-          <Text style={Typography.h2}>Your Bid</Text>
+          <Text style={styles.biddingTitle}>YOUR BID</Text>
+          <Text style={styles.biddingSub}>Choose how many tricks you'll win</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.bidList}>
             {Array.from({ length: (8 - roundNum) + 1 }, (_, i) => i).map((num) => {
               const isIllegal = num === illegalBid;
@@ -74,7 +83,9 @@ const GameScreen = ({ navigation }: any) => {
                   onPress={() => !isIllegal && handlePlaceBid(num)}
                   disabled={isIllegal}
                 >
-                  <Text style={[styles.bidBtnText, isIllegal && { textDecorationLine: 'line-through' }]}>{num}</Text>
+                  <Text style={[styles.bidBtnText, isIllegal && { textDecorationLine: 'line-through', color: Colors.neutralMiss }]}>
+                    {num}
+                  </Text>
                 </TouchableOpacity>
               );
             })}
@@ -84,22 +95,17 @@ const GameScreen = ({ navigation }: any) => {
 
       {/* Bottom - Player Hand */}
       <View style={styles.handArea}>
-        <Text style={styles.handTitle}>YOUR HAND ({hand.length})</Text>
+        <Text style={styles.handTitle}>YOUR HAND</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.handScroll}>
           {hand.map((card, idx) => (
-            <TouchableOpacity 
+            <CardView 
               key={idx} 
-              style={[styles.card, !isMyTurnToPlay && { opacity: 0.6 }]}
+              card={card} 
+              size="large"
+              style={[styles.cardInHand, !isMyTurnToPlay && { opacity: 0.6 }]}
               onPress={() => isMyTurnToPlay && handlePlayCard(card)}
               disabled={!isMyTurnToPlay}
-            >
-              <Text style={[styles.cardRank, (card.suit === 'H' || card.suit === 'D') && { color: Colors.sindoorRed }]}>
-                {card.rank}
-              </Text>
-              <Text style={[styles.cardSuit, (card.suit === 'H' || card.suit === 'D') && { color: Colors.sindoorRed }]}>
-                {card.suit}
-              </Text>
-            </TouchableOpacity>
+            />
           ))}
         </ScrollView>
       </View>
@@ -112,121 +118,108 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.feltGreen,
   },
-  header: {
-    paddingTop: 50,
-    paddingHorizontal: 20,
+  subHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
-  trumpBadge: {
-    backgroundColor: Colors.woodDark,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  trumpText: {
+  roundText: {
+    ...Typography.h2,
     color: Colors.haldiYellow,
-    fontWeight: 'bold',
-    fontSize: 12,
   },
   playArea: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  waitingText: {
+    ...Typography.body,
+    fontStyle: 'italic',
+    color: Colors.mutedText,
+  },
   trickPile: {
     flexDirection: 'row',
-    marginTop: 20,
-    minHeight: 100,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    padding: 20,
   },
   playedCard: {
-    width: 60,
-    height: 80,
-    backgroundColor: Colors.warmCream,
-    borderRadius: 8,
     margin: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-  },
-  cardText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: Colors.inkBlack,
+    transform: [{ rotate: '5deg' }],
   },
   winnerText: {
     ...Typography.body,
-    marginTop: 20,
+    color: Colors.haldiYellow,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  biddingOverlay: {
+    position: 'absolute',
+    top: '30%',
+    left: '5%',
+    width: '90%',
+    backgroundColor: Colors.woodDark,
+    padding: 24,
+    borderRadius: 20,
+    alignItems: 'center',
+    zIndex: 100,
+    borderWidth: 2,
+    borderColor: Colors.haldiYellow,
+    elevation: 20,
+  },
+  biddingTitle: {
+    ...Typography.h1,
     color: Colors.haldiYellow,
   },
+  biddingSub: {
+    ...Typography.body,
+    color: Colors.mutedText,
+    marginBottom: 20,
+  },
+  bidList: {
+    flexDirection: 'row',
+  },
+  bidBtn: {
+    width: 56,
+    height: 56,
+    backgroundColor: Colors.earthBrown,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: Colors.woodMid,
+  },
+  illegalBidBtn: {
+    backgroundColor: '#333',
+    borderColor: Colors.sindoorRed,
+  },
+  bidBtnText: {
+    ...Typography.h2,
+    color: Colors.warmCream,
+  },
   handArea: {
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    paddingVertical: 20,
+    backgroundColor: 'rgba(26, 15, 10, 0.8)',
+    paddingTop: 15,
+    paddingBottom: 30,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
   },
   handTitle: {
     ...Typography.label,
     color: Colors.mutedText,
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 15,
   },
   handScroll: {
     paddingHorizontal: 20,
   },
-  card: {
-    width: 70,
-    height: 100,
-    backgroundColor: Colors.warmCream,
-    borderRadius: 10,
-    marginRight: 10,
-    padding: 10,
-    justifyContent: 'space-between',
-  },
-  cardRank: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: Colors.inkBlack,
-  },
-  cardSuit: {
-    fontSize: 24,
-    textAlign: 'right',
-    color: Colors.inkBlack,
-  },
-  biddingOverlay: {
-    position: 'absolute',
-    top: '30%',
-    left: '10%',
-    width: '80%',
-    backgroundColor: Colors.woodDark,
-    padding: 20,
-    borderRadius: 20,
-    alignItems: 'center',
-    zIndex: 10,
-    borderWidth: 2,
-    borderColor: Colors.haldiYellow,
-  },
-  bidList: {
-    marginTop: 20,
-    flexDirection: 'row',
-  },
-  bidBtn: {
-    width: 50,
-    height: 50,
-    backgroundColor: Colors.earthBrown,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  illegalBidBtn: {
-    opacity: 0.3,
-    borderColor: Colors.sindoorRed,
-    borderWidth: 1,
-  },
-  bidBtnText: {
-    color: Colors.warmCream,
-    fontSize: 18,
-    fontWeight: 'bold',
+  cardInHand: {
+    marginRight: -30, // Fan effect
   },
 });
 
