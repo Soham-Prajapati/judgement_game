@@ -1,7 +1,7 @@
 # PRD — Project Judgement (Kachuful)
 **Version:** 2.0  
 **Status:** Ready for implementation  
-**Stack:** Flutter (mobile) + FastAPI + WebSockets + Redis
+**Stack:** React Native (mobile) + FastAPI + WebSockets + Redis
 
 ---
 
@@ -114,7 +114,7 @@ Trump suit is displayed prominently at all times during play.
 
 **Behaviour:**
 - On first launch, prompt user to set a username (bottom sheet modal)
-- Username saved via `shared_preferences`, pre-filled on all future opens
+- Username saved via `AsyncStorage`, pre-filled on all future opens
 - "Create Room" → calls API to generate room → navigate to Waiting Room as Host
 - "Join Room" → navigate to Join Room Screen
 
@@ -248,7 +248,7 @@ Ad policy: No interstitials, no rewarded ads, no pop-ups. Ads only in waiting st
 
 ## 8. Local Storage Schema
 
-Stored via `shared_preferences` on device:
+Stored via `@react-native-async-storage/async-storage` on device:
 
 | Key | Type | Description |
 |---|---|---|
@@ -269,7 +269,7 @@ No other persistent data on device.
 | Player disconnects in game | Auto-skip their turns, show disconnected indicator |
 | Host disconnects | Promote next player in list to host |
 | All players disconnect | Room deleted from Redis immediately |
-| WebSocket connection lost | Flutter client shows reconnect banner, attempts reconnect x3 |
+| WebSocket connection lost | React Native client shows reconnect banner, attempts reconnect x3 |
 | Redis room TTL expires | Room silently cleaned up; if players still connected, show "Session expired" |
 
 ---

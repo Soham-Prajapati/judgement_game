@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+redis
+pydantic
+pydantic-settings
+pytest
+httpx
+python-multipart
+python-dotenv

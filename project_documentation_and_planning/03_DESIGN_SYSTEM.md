@@ -61,7 +61,7 @@ Warm. Grounded. Alive.
 | Body / UI | **DM Sans** | 400 / 500 | Clean, readable sans. All body copy, labels, buttons. |
 | Monospace (room code) | **JetBrains Mono** | 600 | Room code display, card values |
 
-All fonts available on Google Fonts, free for Flutter via `google_fonts` package.
+All fonts available on Google Fonts, recommended via React Native font setup (`react-native-google-fonts` or bundled font assets).
 
 ### Type Scale
 
@@ -330,13 +330,13 @@ Keep animations snappy. Nothing lingers. Respect that this is a game — motion 
 | Room code copy | Scale pulse on code | 150ms |
 | Trump reveal on round start | Scale 1 → 1.2 → 1 with glow | 500ms |
 
-No page transitions longer than 300ms. Use `go_router` with a simple fade transition.
+No page transitions longer than 300ms. Use `@react-navigation/native-stack` with a simple fade transition.
 
 ---
 
 ## 7. Iconography
 
-Use **Phosphor Icons** Flutter package — warm, rounded, varied weight options.
+Use **Phosphor Icons** React Native package (`phosphor-react-native`) — warm, rounded, varied weight options.
 
 | Element | Icon |
 |---|---|
@@ -387,4 +387,4 @@ Bottom safe area: respect Android gesture bar (use SafeArea)
 - Contrast: --haldi-yellow on --earth-brown = 5.8:1 (passes AA)
 - All suit icons have semantic labels (for screen readers)
 - Room code input: `inputAction = done`, auto-focus on screen load
-- Font scaling: use `sp` units throughout (Flutter default), cap scale factor at 1.3 to prevent layout breaks
+- Font scaling: use React Native `allowFontScaling` with responsive typography, and cap practical scale to avoid layout breaks

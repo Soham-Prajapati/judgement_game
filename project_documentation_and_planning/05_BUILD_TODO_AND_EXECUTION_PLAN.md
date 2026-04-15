@@ -1,4 +1,4 @@
-# Build Todo and Execution Plan (4-Day Window)
+# Build Todo and Execution Plan (4-Day Window, React Native Reset)
 
 Status: Active
 Updated: 2026-04-14
@@ -11,8 +11,9 @@ Ship a playable Android V1 of Judgement (Kachuful) with:
 - Correct rule enforcement (especially last-bid illegal value)
 - Redis-backed ephemeral rooms (2-hour TTL)
 - Ads only on non-gameplay screens
+- React Native frontend + FastAPI backend
 
-UI component/style selection is intentionally deferred to a dedicated checkpoint after backend + event contracts are stable.
+UI component/style selection is deferred until backend contracts are stable.
 
 ---
 
@@ -20,55 +21,55 @@ UI component/style selection is intentionally deferred to a dedicated checkpoint
 
 ## A. Project Foundation
 - [ ] Create repository root structure: backend + frontend
-- [x] Add backend Python environment setup files
-- [x] Add frontend Flutter app scaffold
-- [x] Add shared README with local run instructions
+- [ ] Add backend Python environment setup files
+- [ ] Add frontend React Native app scaffold (TypeScript)
+- [ ] Add shared README with local run instructions
 
 ## B. Backend Core (FastAPI + Redis)
-- [x] Set up FastAPI app entrypoint and CORS
-- [x] Add health endpoint
-- [x] Implement room creation endpoint with 6-char code generation
-- [x] Implement room exists/check endpoint
-- [x] Add async Redis client and room TTL handling
-- [x] Add WebSocket router with room/user connection path
-- [x] Add connection manager (per-room sockets)
+- [ ] Set up FastAPI app entrypoint and CORS
+- [ ] Add health endpoint
+- [ ] Implement room creation endpoint with 6-char code generation
+- [ ] Implement room exists/check endpoint
+- [ ] Add async Redis client and room TTL handling
+- [ ] Add WebSocket router with room/user connection path
+- [ ] Add connection manager (per-room sockets)
 
 ## C. Game Engine (Pure Python)
-- [x] Implement deck creation, shuffle, and deal
-- [x] Implement trump rotation module (spades -> diamonds -> hearts -> clubs)
-- [x] Implement bidding rules with illegal last-bid value
-- [x] Implement trick winner logic (lead suit + trump precedence)
-- [x] Implement round scoring (+10 exact else 0)
-- [x] Add unit tests for all game modules
+- [ ] Implement deck creation, shuffle, and deal
+- [ ] Implement trump rotation module (spades -> diamonds -> hearts -> clubs)
+- [ ] Implement bidding rules with illegal last-bid value
+- [ ] Implement trick winner logic (lead suit + trump precedence)
+- [ ] Implement round scoring (+10 exact else 0)
+- [ ] Add unit tests for all game modules
 
 ## D. Real-Time Game Flow
-- [x] Implement server events for lobby state updates
-- [x] Implement bidding phase orchestration
-- [x] Implement turn-based card play orchestration
-- [x] Implement trick resolution + trick winner updates
-- [x] Implement round end + cumulative score updates
-- [x] Implement game over + rematch flow
+- [ ] Implement server events for lobby state updates
+- [ ] Implement bidding phase orchestration
+- [ ] Implement turn-based card play orchestration
+- [ ] Implement trick resolution + trick winner updates
+- [ ] Implement round end + cumulative score updates
+- [ ] Implement game over + rematch flow
 
 ## E. Resilience and Edge Cases
-- [x] Host migration when host disconnects
-- [x] Auto-skip disconnected players in active game
-- [x] Room cleanup on empty room
+- [ ] Host migration when host disconnects
+- [ ] Auto-skip disconnected players in active game
+- [ ] Room cleanup on empty room
 - [ ] Reconnect support contract for clients
-- [x] Server-side validation for invalid bids/cards
+- [ ] Server-side validation for invalid bids/cards
 
-## F. Frontend Functional Baseline (No Final UI Commitment Yet)
-- [x] Initialize Flutter app services/state shell
-- [x] Implement Home + username persistence
-- [x] Implement Join Room flow with validation/error states
-- [x] Implement Lobby real-time player updates
-- [x] Implement gameplay state wiring to WS events
-- [x] Implement scoreboard matrix rendering from server data
+## F. Frontend Functional Baseline (React Native)
+- [ ] Initialize React Native navigation, store, and services
+- [ ] Implement Home + username persistence (AsyncStorage)
+- [ ] Implement Join Room flow with validation/error states
+- [ ] Implement Lobby real-time player updates
+- [ ] Implement gameplay state wiring to WS events
+- [ ] Implement scoreboard matrix rendering from server data
 
 ## G. Ads and Release Readiness
 - [ ] Integrate AdMob test units (Home + Lobby only)
 - [ ] Ensure no ads on Game Table and Scoreboard
-- [x] Add production URL switching for API/WS bases
-- [x] Build release APK for friend testing
+- [ ] Add production URL switching for API/WS bases
+- [ ] Build release APK for friend testing
 - [ ] Build release AAB and run pre-release checklist
 
 ---
@@ -76,29 +77,29 @@ UI component/style selection is intentionally deferred to a dedicated checkpoint
 ## 3) 4-Day Execution Plan
 
 ## Day 1 - Backend Skeleton + Game Rules Core
-- [x] Create backend folder structure and baseline files
-- [x] Implement: deck, trump, bidding, scoring modules
-- [x] Add unit tests for these modules
-- [x] Validate all rule logic with pytest
+- [ ] Create backend folder structure and baseline files
+- [ ] Implement: deck, trump, bidding, scoring modules
+- [ ] Add unit tests for these modules
+- [ ] Validate all rule logic with pytest
 
 Exit criteria:
 - Game rule modules pass tests
 - Room create/check endpoints respond correctly
 
 ## Day 2 - WebSocket Game Orchestration
-- [x] Add WebSocket connection manager + router events
-- [x] Implement: lobby updates, deal, bid flow, turn flow
-- [x] Implement disconnect handling + host promotion
-- [x] Multiplayer sanity validation via automated 2-player game flow tests
+- [ ] Add WebSocket connection manager + router events
+- [ ] Implement: lobby updates, deal, bid flow, turn flow
+- [ ] Implement disconnect handling + host promotion
+- [ ] Multiplayer sanity test with 2 clients
 
 Exit criteria:
 - Full round completes server-side over WebSocket
 - Disconnection paths do not break room state
 
-## Day 3 - Flutter Wiring + UI Decision Checkpoint
-- [x] Implement Flutter project skeleton and service wiring
-- [x] Build functional screens with placeholder-safe components
-- [x] Connect server events to client state updates
+## Day 3 - React Native Wiring + UI Decision Checkpoint
+- [ ] Implement React Native project skeleton, navigation, state store, WS service, API service
+- [ ] Build functional screens with placeholder-safe components
+- [ ] Connect server events to client state updates
 - [ ] Run UI Decision Checkpoint (below)
 
 Exit criteria:
@@ -109,7 +110,7 @@ Exit criteria:
 - [ ] Apply finalized design system tokens/components
 - [ ] Integrate AdMob in Home/Lobby
 - [ ] Run edge-case and reconnection checks
-- [ ] Build release artifacts (AAB) and deployment notes
+- [ ] Build release artifacts (APK/AAB) and deployment notes
 
 Exit criteria:
 - Stable end-to-end multiplayer flow
@@ -122,10 +123,10 @@ Exit criteria:
 Decision happens only after event contracts are stable.
 
 Evaluate and choose:
-- Base component strategy: custom widgets vs package-assisted widgets
+- Base component strategy: custom components vs package-assisted UI components
 - Animation approach for dealing/playing/trick resolution
-- Final typography loading strategy and fallback handling
-- SVG suit/icon pipeline and asset performance
+- Typography strategy and fallback handling
+- SVG suit/icon pipeline and render performance
 
 Selection criteria:
 - Gameplay clarity under network latency
@@ -158,22 +159,7 @@ Recommended use sequence:
 
 ## 6) Immediate Next Build Actions
 
-- [x] Scaffold backend directories and baseline files now
-- [x] Implement first test-backed game modules: trump, bidding, scoring
-- [x] Wire minimal FastAPI routes: /health, /room/create, /room/{code}/exists
-
-## 7) Build Progress Delta (2026-04-14)
-
-- [x] Added `game/tricks.py` with lead-suit/trump winner logic and playable-card filtering
-- [x] Added `services/game_service.py` for round orchestration (`start_game`, bidding, play, round end, rematch)
-- [x] Upgraded `routers/websocket.py` to contract events (`client_start_game`, `client_place_bid`, `client_play_card`, `client_next_round`, `client_rematch`)
-- [x] Added Redis-backed room join/leave lifecycle and host migration in `services/room_service.py`
-- [x] Added tests: `tests/test_deck.py`, `tests/test_tricks.py`
-- [x] Imported card pixel assets into `frontend/assets/cards/sprites` (68 PNG files)
-- [x] Added frontend baseline files: `frontend/pubspec.yaml`, `frontend/lib/main.dart`, `frontend/lib/core/card_asset_path.dart`
-- [x] Added root runbook `README.md` with local run, internet deployment, and APK distribution steps
-- [x] Added Day 2 flow tests in `backend/tests/test_game_flow.py` (full round + disconnect handling)
-- [x] Added runtime URL config via `frontend/lib/core/app_config.dart` and documented `--dart-define` usage
-- [x] Implemented functional Flutter room/lobby/game shell in `frontend/lib/main.dart`
-- [x] Generated Android build scaffold and validated release APK output in `frontend/build/app/outputs/flutter-apk/app-release.apk`
-- [x] Added `frontend/build_friend_apk.sh` to build friend-test APKs against any public backend URL
+- [ ] Scaffold backend directories and baseline files
+- [ ] Implement test-backed game modules: trump, bidding, scoring
+- [ ] Wire minimal FastAPI routes: /health, /room/create, /room/{code}/exists
+- [ ] Scaffold React Native frontend and connect local backend

@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+.pytest_cache/
+.DS_Store
+
+# Node / React Native
+node_modules/
+*.log
+android/app/build/
+ios/build/
+.expo/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Project specific
+last-output.md
+last-output.html
