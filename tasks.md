@@ -24,8 +24,8 @@
 - [x] Add unit tests for all game modules
 
 ## D. Real-Time Game Flow
-- [ ] Implement server events for lobby state updates
-- [ ] Implement bidding phase orchestration
+- [x] Implement server events for lobby state updates
+- [/] Implement bidding phase orchestration
 - [ ] Implement turn-based card play orchestration
 - [ ] Implement trick resolution + trick winner updates
 - [ ] Implement round end + cumulative score updates

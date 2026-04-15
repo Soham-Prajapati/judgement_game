@@ -36,7 +36,8 @@ async def create_room(host_username: str) -> str:
     await redis_client.redis.expire(room_key, ROOM_TTL)
     
     # Also add host to players list
-    await redis_client.lpush(f"room:{code}:players", host_username)
+    # Use lpush but we want order preserved, so maybe rpush or just lrange carefully
+    await redis_client.redis.rpush(f"room:{code}:players", host_username)
     await redis_client.redis.expire(f"room:{code}:players", ROOM_TTL)
 
     return code
@@ -53,3 +54,9 @@ async def get_player_count(code: str) -> int:
     """
     players = await redis_client.lrange(f"room:{code}:players", 0, -1)
     return len(players)
+
+async def get_room_meta(code: str) -> dict:
+    """
+    Returns room metadata.
+    """
+    return await redis_client.hgetall(f"room:{code}:meta")
