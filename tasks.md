@@ -27,9 +27,9 @@
 - [x] Implement server events for lobby state updates
 - [x] Implement bidding phase orchestration
 - [x] Implement turn-based card play orchestration
-- [/] Implement trick resolution + trick winner updates
-- [ ] Implement round end + cumulative score updates
-- [ ] Implement game over + rematch flow
+- [x] Implement trick resolution + trick winner updates
+- [x] Implement round end + cumulative score updates
+- [x] Implement game over + rematch flow
 
 ## E. Resilience and Edge Cases
 - [ ] Host migration when host disconnects
