@@ -1,17 +1,17 @@
 # Build Todo and Execution Plan (4-Day Window, React Native Reset)
 
 Status: Active
-Updated: 2026-04-14
+Updated: 2026-04-15
 
 ## 1) Build Objective
 
 Ship a playable Android V1 of Judgement (Kachuful) with:
-- Room create/join flow
-- Real-time multiplayer game loop (deal -> bid -> play -> score)
-- Correct rule enforcement (especially last-bid illegal value)
-- Redis-backed ephemeral rooms (2-hour TTL)
-- Ads only on non-gameplay screens
-- React Native frontend + FastAPI backend
+- [x] Room create/join flow
+- [x] Real-time multiplayer game loop (deal -> bid -> play -> score)
+- [x] Correct rule enforcement (especially last-bid illegal value)
+- [x] Redis-backed ephemeral rooms (2-hour TTL)
+- [ ] Ads only on non-gameplay screens
+- [ ] React Native frontend + FastAPI backend
 
 UI component/style selection is deferred until backend contracts are stable.
 
@@ -20,35 +20,35 @@ UI component/style selection is deferred until backend contracts are stable.
 ## 2) Master Todo (Execution Checklist)
 
 ## A. Project Foundation
-- [ ] Create repository root structure: backend + frontend
-- [ ] Add backend Python environment setup files
+- [x] Create repository root structure: backend + frontend
+- [x] Add backend Python environment setup files
 - [ ] Add frontend React Native app scaffold (TypeScript)
-- [ ] Add shared README with local run instructions
+- [x] Add shared README with local run instructions
 
 ## B. Backend Core (FastAPI + Redis)
-- [ ] Set up FastAPI app entrypoint and CORS
-- [ ] Add health endpoint
-- [ ] Implement room creation endpoint with 6-char code generation
-- [ ] Implement room exists/check endpoint
-- [ ] Add async Redis client and room TTL handling
-- [ ] Add WebSocket router with room/user connection path
-- [ ] Add connection manager (per-room sockets)
+- [x] Set up FastAPI app entrypoint and CORS
+- [x] Add health endpoint
+- [x] Implement room creation endpoint with 6-char code generation
+- [x] Implement room exists/check endpoint
+- [x] Add async Redis client and room TTL handling
+- [x] Add WebSocket router with room/user connection path
+- [x] Add connection manager (per-room sockets)
 
 ## C. Game Engine (Pure Python)
-- [ ] Implement deck creation, shuffle, and deal
-- [ ] Implement trump rotation module (spades -> diamonds -> hearts -> clubs)
-- [ ] Implement bidding rules with illegal last-bid value
-- [ ] Implement trick winner logic (lead suit + trump precedence)
-- [ ] Implement round scoring (+10 exact else 0)
-- [ ] Add unit tests for all game modules
+- [x] Implement deck creation, shuffle, and deal
+- [x] Implement trump rotation module (spades -> diamonds -> hearts -> clubs)
+- [x] Implement bidding rules with illegal last-bid value
+- [x] Implement trick winner logic (lead suit + trump precedence)
+- [x] Implement round scoring (+10 exact else 0)
+- [x] Add unit tests for all game modules
 
 ## D. Real-Time Game Flow
-- [ ] Implement server events for lobby state updates
-- [ ] Implement bidding phase orchestration
-- [ ] Implement turn-based card play orchestration
-- [ ] Implement trick resolution + trick winner updates
-- [ ] Implement round end + cumulative score updates
-- [ ] Implement game over + rematch flow
+- [x] Implement server events for lobby state updates
+- [x] Implement bidding phase orchestration
+- [x] Implement turn-based card play orchestration
+- [x] Implement trick resolution + trick winner updates
+- [x] Implement round end + cumulative score updates
+- [x] Implement game over + rematch flow
 
 ## E. Resilience and Edge Cases
 - [ ] Host migration when host disconnects
@@ -77,24 +77,24 @@ UI component/style selection is deferred until backend contracts are stable.
 ## 3) 4-Day Execution Plan
 
 ## Day 1 - Backend Skeleton + Game Rules Core
-- [ ] Create backend folder structure and baseline files
-- [ ] Implement: deck, trump, bidding, scoring modules
-- [ ] Add unit tests for these modules
-- [ ] Validate all rule logic with pytest
+- [x] Create backend folder structure and baseline files
+- [x] Implement: deck, trump, bidding, scoring modules
+- [x] Add unit tests for these modules
+- [x] Validate all rule logic with pytest
 
 Exit criteria:
 - Game rule modules pass tests
 - Room create/check endpoints respond correctly
 
 ## Day 2 - WebSocket Game Orchestration
-- [ ] Add WebSocket connection manager + router events
-- [ ] Implement: lobby updates, deal, bid flow, turn flow
+- [x] Add WebSocket connection manager + router events
+- [x] Implement: lobby updates, deal, bid flow, turn flow
 - [ ] Implement disconnect handling + host promotion
-- [ ] Multiplayer sanity test with 2 clients
+- [x] Multiplayer sanity test with 2 clients
 
 Exit criteria:
 - Full round completes server-side over WebSocket
-- Disconnection paths do not break room state
+- Disconnection paths do not break room state (Pending refined migration)
 
 ## Day 3 - React Native Wiring + UI Decision Checkpoint
 - [ ] Implement React Native project skeleton, navigation, state store, WS service, API service
@@ -159,7 +159,6 @@ Recommended use sequence:
 
 ## 6) Immediate Next Build Actions
 
-- [ ] Scaffold backend directories and baseline files
-- [ ] Implement test-backed game modules: trump, bidding, scoring
-- [ ] Wire minimal FastAPI routes: /health, /room/create, /room/{code}/exists
 - [ ] Scaffold React Native frontend and connect local backend
+- [ ] Implement Home/Join/Lobby screens
+- [ ] Wire WebSocket events to Zustand store
