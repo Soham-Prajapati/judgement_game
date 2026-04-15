@@ -104,6 +104,45 @@ async def websocket_endpoint(websocket: WebSocket, room_code: str, username: str
                 else:
                     await websocket.send_json({"type": "server_error", "message": result})
 
+            elif event["type"] == "client_play_card":
+                card = event.get("card")
+                success, result = await game_service.play_card(room_code, username, card)
+                
+                if success:
+                    if result["type"] == "card_played":
+                        await manager.broadcast({
+                            "type": "server_turn_update",
+                            "current_player": result["next_player"],
+                            "trick_so_far": result["trick_so_far"]
+                        }, room_code)
+                    elif result["type"] == "trick_resolved":
+                        await manager.broadcast({
+                            "type": "server_trick_result",
+                            "winner": result["winner"],
+                            "trick_cards": result["trick_cards"]
+                        }, room_code)
+                        # After brief pause (handled by client), client expects server_turn_update
+                        # For simplicity, we send it immediately, client can delay UI update
+                        await manager.broadcast({
+                            "type": "server_turn_update",
+                            "current_player": result["winner"],
+                            "trick_so_far": []
+                        }, room_code)
+                    elif result["type"] == "round_end":
+                        await manager.broadcast({
+                            "type": "server_trick_result",
+                            "winner": result["winner"],
+                            "trick_cards": result["trick_cards"]
+                        }, room_code)
+                        await manager.broadcast({
+                            "type": "server_round_end",
+                            "round_num": result["round_results"]["round_num"],
+                            "scores": result["round_results"]["round_scores"],
+                            "total_scores": result["round_results"]["total_scores"]
+                        }, room_code)
+                else:
+                    await websocket.send_json({"type": "server_error", "message": result})
+
     except WebSocketDisconnect:
         manager.disconnect(websocket, room_code, username)
         updated_players = await room_service.redis_client.lrange(f"room:{room_code}:players", 0, -1)

@@ -1,7 +1,9 @@
 from .redis_client import redis_client
-from game.deck import create_deck, shuffle_deck, deal_cards
+from game.deck import create_deck, shuffle_deck, deal_cards, Card
 from game.trump import get_trump_suit
 from game.bidding import is_valid_bid, get_illegal_bid
+from game.tricks import is_valid_play, get_trick_winner
+from game.scoring import calculate_round_score
 import json
 import os
 
@@ -30,8 +32,10 @@ async def start_game(room_code: str):
     await redis_client.hset(f"room:{room_code}:hands", hands_dict)
     await redis_client.redis.expire(f"room:{room_code}:hands", ROOM_TTL)
     
-    # Clear previous bids
+    # Clear previous state
     await redis_client.delete(f"room:{room_code}:bids")
+    await redis_client.delete(f"room:{room_code}:tricks_won")
+    await redis_client.delete(f"room:{room_code}:scores")
     
     # Update room meta
     await redis_client.hset(f"room:{room_code}:meta", {
@@ -61,46 +65,33 @@ async def place_bid(room_code: str, username: str, bid: int):
     cards_per_player = int(meta["cards_per_player"])
     current_bidder_idx = int(meta["current_bidder_idx"])
     
-    # Verify it's this player's turn
     if players[current_bidder_idx] != username:
         return False, "Not your turn to bid"
     
-    # Get current bids
     bids_raw = await redis_client.hgetall(f"room:{room_code}:bids")
     current_bids = [int(v) for v in bids_raw.values()]
-    
     is_last = (current_bidder_idx == len(players) - 1)
     
     if not is_valid_bid(bid, cards_per_player, current_bids, is_last):
         return False, "Invalid bid"
     
-    # Save bid
     await redis_client.redis.hset(f"room:{room_code}:bids", username, bid)
     await redis_client.redis.expire(f"room:{room_code}:bids", ROOM_TTL)
     
-    # Check if bidding phase is over
     if is_last:
-        # All players have bid. Transition to 'playing'
         await redis_client.hset(f"room:{room_code}:meta", {
             "status": "playing",
-            "current_player_idx": "0" # First player starts trick 1
+            "current_player_idx": "0" 
         })
-        
-        # Initialize trick state
         await redis_client.delete(f"room:{room_code}:trick_pile")
-        
         return True, {
             "type": "playing_transition",
             "bids": await redis_client.hgetall(f"room:{room_code}:bids")
         }
     else:
-        # Next bidder
         next_idx = current_bidder_idx + 1
         await redis_client.hset(f"room:{room_code}:meta", "current_bidder_idx", str(next_idx))
-        
         updated_bids = await redis_client.hgetall(f"room:{room_code}:bids")
-        
-        # Calculate illegal bid for next player if they are last
         next_is_last = (next_idx == len(players) - 1)
         illegal = None
         if next_is_last:
@@ -113,3 +104,120 @@ async def place_bid(room_code: str, username: str, bid: int):
             "bids": updated_bids,
             "illegal_bid": illegal
         }
+
+async def play_card(room_code: str, username: str, card_dict: dict):
+    """
+    Handles a player playing a card.
+    """
+    players = await redis_client.lrange(f"room:{room_code}:players", 0, -1)
+    meta = await redis_client.hgetall(f"room:{room_code}:meta")
+    
+    current_player_idx = int(meta["current_player_idx"])
+    if players[current_player_idx] != username:
+        return False, "Not your turn"
+    
+    # Load hand
+    hands_raw = await redis_client.hgetall(f"room:{room_code}:hands")
+    hand = [Card(**c) for c in json.loads(hands_raw[username])]
+    
+    # Load current trick
+    trick_raw = await redis_client.lrange(f"room:{room_code}:trick_pile", 0, -1)
+    trick = [(item.split(":")[0], Card(**json.loads(item.split(":")[1]))) 
+             for item in trick_raw]
+    
+    played_card = Card(**card_dict)
+    
+    # Validate play
+    if not is_valid_play(played_card, hand, trick):
+        return False, "Must follow suit"
+    
+    # Remove card from hand
+    new_hand = [c for c in hand if not (c.suit == played_card.suit and c.rank == played_card.rank)]
+    await redis_client.hset(f"room:{room_code}:hands", username, json.dumps([c.to_dict() for c in new_hand]))
+    
+    # Add to trick pile
+    await redis_client.redis.rpush(f"room:{room_code}:trick_pile", f"{username}:{json.dumps(card_dict)}")
+    await redis_client.redis.expire(f"room:{room_code}:trick_pile", ROOM_TTL)
+    
+    updated_trick_raw = await redis_client.lrange(f"room:{room_code}:trick_pile", 0, -1)
+    updated_trick = [json.loads(item.split(":")[1]) for item in updated_trick_raw]
+    
+    # Check if trick is full
+    if len(updated_trick) == len(players):
+        # Resolve trick
+        trick_objects = [(item.split(":")[0], Card(**json.loads(item.split(":")[1]))) 
+                         for item in updated_trick_raw]
+        winner = get_trick_winner(trick_objects, meta["trump_suit"])
+        
+        # Increment tricks won
+        await redis_client.redis.hincrby(f"room:{room_code}:tricks_won", winner, 1)
+        await redis_client.redis.expire(f"room:{room_code}:tricks_won", ROOM_TTL)
+        
+        # Next player is the winner
+        winner_idx = players.index(winner)
+        await redis_client.hset(f"room:{room_code}:meta", "current_player_idx", str(winner_idx))
+        
+        # Clear trick pile for next trick
+        await redis_client.delete(f"room:{room_code}:trick_pile")
+        
+        # Check if round is over (no cards left in winner's hand)
+        if len(new_hand) == 0:
+            # Round over! Calculate scores
+            results = await calculate_round_end(room_code, players)
+            return True, {
+                "type": "round_end",
+                "winner": winner,
+                "trick_cards": updated_trick,
+                "round_results": results
+            }
+            
+        return True, {
+            "type": "trick_resolved",
+            "winner": winner,
+            "trick_cards": updated_trick
+        }
+    else:
+        # Next player
+        next_player_idx = (current_player_idx + 1) % len(players)
+        await redis_client.hset(f"room:{room_code}:meta", "current_player_idx", str(next_player_idx))
+        
+        return True, {
+            "type": "card_played",
+            "player": username,
+            "card": card_dict,
+            "next_player": players[next_player_idx],
+            "trick_so_far": updated_trick
+        }
+
+async def calculate_round_end(room_code: str, players: list):
+    """
+    Calculates final scores for the round.
+    """
+    bids = await redis_client.hgetall(f"room:{room_code}:bids")
+    tricks_won = await redis_client.hgetall(f"room:{room_code}:tricks_won")
+    
+    round_scores = {}
+    for p in players:
+        p_bid = int(bids.get(p, 0))
+        p_won = int(tricks_won.get(p, 0))
+        score = calculate_round_score(p_bid, p_won)
+        round_scores[p] = score
+        # Update cumulative score
+        await redis_client.redis.hincrby(f"room:{room_code}:total_scores", p, score)
+    
+    await redis_client.redis.expire(f"room:{room_code}:total_scores", ROOM_TTL)
+    
+    total_scores = await redis_client.hgetall(f"room:{room_code}:total_scores")
+    
+    # Store round history
+    meta = await redis_client.hgetall(f"room:{room_code}:meta")
+    round_num = meta["round_num"]
+    await redis_client.hset(f"room:{room_code}:history:{round_num}", round_scores)
+    
+    await redis_client.hset(f"room:{room_code}:meta", "status", "round_end")
+    
+    return {
+        "round_num": round_num,
+        "round_scores": round_scores,
+        "total_scores": total_scores
+    }

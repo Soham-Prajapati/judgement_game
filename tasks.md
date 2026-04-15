@@ -25,9 +25,9 @@
 
 ## D. Real-Time Game Flow
 - [x] Implement server events for lobby state updates
-- [/] Implement bidding phase orchestration
-- [ ] Implement turn-based card play orchestration
-- [ ] Implement trick resolution + trick winner updates
+- [x] Implement bidding phase orchestration
+- [x] Implement turn-based card play orchestration
+- [/] Implement trick resolution + trick winner updates
 - [ ] Implement round end + cumulative score updates
 - [ ] Implement game over + rematch flow
 
