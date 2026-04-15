@@ -11,7 +11,7 @@ Ship a playable Android V1 of Judgement (Kachuful) with:
 - [x] Correct rule enforcement (especially last-bid illegal value)
 - [x] Redis-backed ephemeral rooms (2-hour TTL)
 - [ ] Ads only on non-gameplay screens
-- [ ] React Native frontend + FastAPI backend
+- [x] React Native frontend + FastAPI backend
 
 UI component/style selection is deferred until backend contracts are stable.
 
@@ -22,7 +22,7 @@ UI component/style selection is deferred until backend contracts are stable.
 ## A. Project Foundation
 - [x] Create repository root structure: backend + frontend
 - [x] Add backend Python environment setup files
-- [ ] Add frontend React Native app scaffold (TypeScript)
+- [x] Add frontend React Native app scaffold (TypeScript)
 - [x] Add shared README with local run instructions
 
 ## B. Backend Core (FastAPI + Redis)
@@ -58,12 +58,12 @@ UI component/style selection is deferred until backend contracts are stable.
 - [ ] Server-side validation for invalid bids/cards
 
 ## F. Frontend Functional Baseline (React Native)
-- [ ] Initialize React Native navigation, store, and services
-- [ ] Implement Home + username persistence (AsyncStorage)
-- [ ] Implement Join Room flow with validation/error states
-- [ ] Implement Lobby real-time player updates
-- [ ] Implement gameplay state wiring to WS events
-- [ ] Implement scoreboard matrix rendering from server data
+- [x] Initialize React Native navigation, store, and services
+- [x] Implement Home + username persistence (AsyncStorage)
+- [x] Implement Join Room flow with validation/error states
+- [x] Implement Lobby real-time player updates
+- [x] Implement gameplay state wiring to WS events
+- [x] Implement scoreboard matrix rendering from server data
 
 ## G. Ads and Release Readiness
 - [ ] Integrate AdMob test units (Home + Lobby only)
@@ -97,9 +97,9 @@ Exit criteria:
 - Disconnection paths do not break room state (Pending refined migration)
 
 ## Day 3 - React Native Wiring + UI Decision Checkpoint
-- [ ] Implement React Native project skeleton, navigation, state store, WS service, API service
-- [ ] Build functional screens with placeholder-safe components
-- [ ] Connect server events to client state updates
+- [x] Implement React Native project skeleton, navigation, state store, WS service, API service
+- [x] Build functional screens with placeholder-safe components
+- [x] Connect server events to client state updates
 - [ ] Run UI Decision Checkpoint (below)
 
 Exit criteria:
@@ -120,14 +120,6 @@ Exit criteria:
 
 ## 4) Deferred UI Decision Checkpoint (Day 3)
 
-Decision happens only after event contracts are stable.
-
-Evaluate and choose:
-- Base component strategy: custom components vs package-assisted UI components
-- Animation approach for dealing/playing/trick resolution
-- Typography strategy and fallback handling
-- SVG suit/icon pipeline and render performance
-
 Selection criteria:
 - Gameplay clarity under network latency
 - Low jank on mid-range Android devices
@@ -136,29 +128,8 @@ Selection criteria:
 
 ---
 
-## 5) Skill Usage Map (Available in Current Environment)
-
-The path /soupz-agents/default/agents was not found locally.
-Using installed skills under /Users/shubh/.agents/skills:
-
-- soupz-team-lead: parallel execution splits when 2+ independent workstreams exist
-- soupz-planner: dependency map and anti-collision planning before coding bursts
-- soupz-orchestration-modes: choose party vs quick-dev mode per milestone
-- soupz-architect: API contracts and game-state model hardening
-- soupz-devops: deployment pipeline and release automation
-- soupz-designer: final UI visual system selection and refinement
-- soupz-researcher: package/library benchmarking during UI checkpoint
-
-Recommended use sequence:
-1. Day 1 start: soupz-planner
-2. Day 2 start: soupz-architect
-3. Day 3 checkpoint: soupz-team-lead + soupz-designer + soupz-researcher
-4. Day 4 release: soupz-devops
-
----
-
 ## 6) Immediate Next Build Actions
 
-- [ ] Scaffold React Native frontend and connect local backend
-- [ ] Implement Home/Join/Lobby screens
-- [ ] Wire WebSocket events to Zustand store
+- [ ] Implement UI Polish (Cards, Animations, Desi Theme)
+- [ ] Integrate AdMob
+- [ ] Handle Edge cases (Disconnection migration)

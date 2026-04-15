@@ -3,7 +3,7 @@
 ## A. Project Foundation
 - [x] Create repository root structure: backend + frontend
 - [x] Add backend Python environment setup files
-- [ ] Add frontend React Native app scaffold (TypeScript)
+- [x] Add frontend React Native app scaffold (TypeScript)
 - [x] Add shared README with local run instructions
 
 ## B. Backend Core (FastAPI + Redis)
@@ -39,12 +39,12 @@
 - [ ] Server-side validation for invalid bids/cards
 
 ## F. Frontend Functional Baseline (React Native)
-- [ ] Initialize React Native navigation, store, and services
-- [ ] Implement Home + username persistence (AsyncStorage)
-- [ ] Implement Join Room flow with validation/error states
-- [ ] Implement Lobby real-time player updates
-- [ ] Implement gameplay state wiring to WS events
-- [ ] Implement scoreboard matrix rendering from server data
+- [x] Initialize React Native navigation, store, and services
+- [x] Implement Home + username persistence (AsyncStorage)
+- [x] Implement Join Room flow with validation/error states
+- [x] Implement Lobby real-time player updates
+- [x] Implement gameplay state wiring to WS events
+- [x] Implement scoreboard matrix rendering from server data
 
 ## G. Ads and Release Readiness
 - [ ] Integrate AdMob test units (Home + Lobby only)
