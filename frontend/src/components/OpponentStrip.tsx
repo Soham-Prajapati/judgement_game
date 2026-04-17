@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { Colors, Typography } from '../core/theme';
+import { Colors } from '../core/theme';
 
 interface OpponentStripProps {
   players: string[];

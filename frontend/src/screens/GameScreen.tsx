@@ -22,7 +22,7 @@ const GameScreen = ({ navigation }: any) => {
     if (status === 'round_end' || status === 'game_over') {
       navigation.navigate('Scoreboard');
     }
-  }, [status]);
+  }, [navigation, status]);
 
   const handlePlaceBid = (bid: number) => {
     socketClient.send('client_place_bid', { bid });

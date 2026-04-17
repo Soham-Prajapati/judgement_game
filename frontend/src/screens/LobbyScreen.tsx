@@ -15,7 +15,7 @@ const LobbyScreen = ({ navigation }: any) => {
     if (status === 'bidding' || status === 'playing') {
       navigation.navigate('Game');
     }
-  }, [status]);
+  }, [navigation, status]);
 
   const onShare = async () => {
     try {

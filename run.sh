@@ -43,8 +43,8 @@ case $choice in
         git commit -m "deploy: final configuration for hugging face global play"
         git push origin main
         echo -e "\n${GREEN}=== PUSH COMPLETE ===${NC}"
-        echo "Railway is now building your game."
-        echo "Check your HF Space. It will be live in ~2 minutes!"
+        echo "Hugging Face is now building your game."
+        echo "Check your HF Space build logs and app URL."
         ;;
     4)
         cd frontend && eas build -p android --profile preview

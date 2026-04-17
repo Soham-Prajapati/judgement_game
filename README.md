@@ -26,11 +26,15 @@ A real-time multiplayer mobile card game built with Expo (React Native) and Fast
 ---
 
 ## Playing with Friends (Public Hosting)
-If your backend is hosted on Railway:
+If your backend is hosted on Hugging Face:
 1. Open `frontend/src/core/constants.ts`.
-2. Update `apiBaseUrl` and `wsBaseUrl` to your Railway URLs.
-3. Run `npx expo start` in the `frontend` folder.
-4. Anyone with the Expo Go app can scan your QR code and play with you!
+2. Update `apiBaseUrl` to `https://<your-space>.hf.space`.
+3. Update `wsBaseUrl` to `wss://<your-space>.hf.space`.
+4. Run `npx expo start` in the `frontend` folder.
+5. Anyone with the Expo Go app can scan your QR code and play with you.
+
+For full deployment steps (Hugging Face + Upstash), see:
+`project_documentation_and_planning/DEPLOYMENT_HUGGINGFACE_UPSTASH.md`
 
 ## Game Rules
 - 2-6 players.

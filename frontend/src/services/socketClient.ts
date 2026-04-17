@@ -1,7 +1,6 @@
 import { AppConstants } from '../core/constants';
 import { useRoomStore } from '../store/useRoomStore';
 import { useGameStore } from '../store/useGameStore';
-import { useUserStore } from '../store/useUserStore';
 
 class SocketClient {
   private socket: WebSocket | null = null;

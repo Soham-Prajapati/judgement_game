@@ -24,7 +24,7 @@ const JoinRoomScreen = ({ navigation }: any) => {
       } else {
         setError('Room not found');
       }
-    } catch (err) {
+    } catch {
       setError('Error connecting to server');
     }
   };

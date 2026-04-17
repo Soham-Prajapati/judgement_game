@@ -5,7 +5,6 @@ import { useGameStore } from '../store/useGameStore';
 import { useUserStore } from '../store/useUserStore';
 import { useRoomStore } from '../store/useRoomStore';
 import { socketClient } from '../services/socketClient';
-import CardView from '../components/CardView';
 
 const ScoreboardScreen = ({ navigation }: any) => {
   const { status, roundNum, roundScores, totalScores, winner, trumpSuit } = useGameStore();
