@@ -6,39 +6,40 @@ import uvicorn
 import os
 from dotenv import load_dotenv
 from routers import room, websocket
-import os
 
 load_dotenv()
 
 app = FastAPI(title="Project Judgement (Kachuful)")
 
-# Configure CORS
-allowed_origins = os.getenv("ALLOWED_ORIGINS", "*").split(",")
+# 1. PERMISSIVE CORS (Crucial for APKs to talk to Railway)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include API routers
+# 2. PRIORITY ROUTERS (API and WS must be registered BEFORE static catch-all)
 app.include_router(room.router)
 app.include_router(websocket.router)
 
-# Serve the Frontend Web App
-# We will put the built files in a folder called 'static'
+# 3. STATIC WEB APP (Optional, for playing in browser)
 if os.path.exists("static"):
-    app.mount("/static", StaticFiles(directory="static"), name="static")
+    # Mount static files under /browser so they don't conflict with /ws
+    app.mount("/browser", StaticFiles(directory="static"), name="static")
 
-    @app.get("/{full_path:path}")
+    @app.get("/")
+    async def serve_home():
+        return FileResponse("static/index.html")
+
+    @app.get("/play/{full_path:path}")
     async def serve_frontend(full_path: str):
-        # Serve the index.html for any route to support SPA navigation
         return FileResponse("static/index.html")
 else:
     @app.get("/")
-    async def health_check():
-        return {"status": "Backend Live - Static folder not found yet"}
+    async def health():
+        return {"status": "Judgement Backend Live"}
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
