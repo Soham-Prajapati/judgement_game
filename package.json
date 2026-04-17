@@ -1,0 +1,7 @@
+{
+  "name": "judgement-root",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "./run.sh"
+  }
+}

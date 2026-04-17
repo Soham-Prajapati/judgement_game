@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Modal, ScrollView } from 'react-native';
 import { Colors, Typography } from '../core/theme';
 import { useUserStore } from '../store/useUserStore';
 import { apiClient } from '../services/apiClient';
 import { socketClient } from '../services/socketClient';
-import { useRoomStore } from '../store/useRoomStore';
 
 const HomeScreen = ({ navigation }: any) => {
   const { username, setUsername } = useUserStore();
   const [showUserModal, setShowUserModal] = useState(false);
+  const [showRulesModal, setShowRulesModal] = useState(false);
   const [tempName, setTempName] = useState('');
 
   useEffect(() => {
-    if (!username) {
-      setShowUserModal(true);
-    }
+    if (!username) setShowUserModal(true);
   }, [username]);
 
   const handleCreateRoom = async () => {
@@ -23,9 +21,7 @@ const HomeScreen = ({ navigation }: any) => {
       const response = await apiClient.createRoom(username);
       socketClient.connect(response.room_code, username);
       navigation.navigate('Lobby', { roomCode: response.room_code });
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) { console.error(error); }
   };
 
   const saveUsername = () => {
@@ -45,14 +41,15 @@ const HomeScreen = ({ navigation }: any) => {
         <TouchableOpacity style={styles.primaryButton} onPress={handleCreateRoom}>
           <Text style={Typography.label}>Create Room</Text>
         </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.secondaryButton} 
-          onPress={() => navigation.navigate('JoinRoom')}
-        >
+        <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('JoinRoom')}>
           <Text style={[Typography.label, { color: Colors.warmCream }]}>Join Room</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.rulesButton} onPress={() => setShowRulesModal(true)}>
+          <Text style={[Typography.label, { color: Colors.mutedText, fontSize: 10 }]}>How to Play?</Text>
         </TouchableOpacity>
       </View>
 
+      {/* Username Modal */}
       <Modal visible={showUserModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -71,70 +68,41 @@ const HomeScreen = ({ navigation }: any) => {
           </View>
         </View>
       </Modal>
+
+      {/* Rules Modal */}
+      <Modal visible={showRulesModal} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { height: '70%' }]}>
+            <Text style={Typography.h2}>The Rules</Text>
+            <ScrollView style={{ marginTop: 20 }}>
+              <Text style={styles.ruleItem}>🎴 7 Rounds: Starts with 7 cards, ends with 1.</Text>
+              <Text style={styles.ruleItem}>🎺 Trump Suit: Rotates every round (♠️ ➡️ ♦️ ➡️ ❤️ ➡️ ♣️).</Text>
+              <Text style={styles.ruleItem}>⚖️ Bidding: Predict exactly how many tricks you will win.</Text>
+              <Text style={styles.ruleItem}>🚫 The Constraint: The last bidder cannot bid a number that makes the total bids equal to the cards dealt.</Text>
+              <Text style={styles.ruleItem}>💰 Scoring: Hit your bid exactly? +10 points. Miss it? 0 points.</Text>
+            </ScrollView>
+            <TouchableOpacity style={[styles.primaryButton, { marginTop: 20 }]} onPress={() => setShowRulesModal(false)}>
+              <Text style={Typography.label}>Got it!</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.earthBrown,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  subtitle: {
-    ...Typography.body,
-    color: Colors.mutedText,
-    marginTop: 8,
-  },
-  actions: {
-    width: '100%',
-    marginTop: 60,
-  },
-  playingAs: {
-    ...Typography.body,
-    color: Colors.mutedText,
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  primaryButton: {
-    backgroundColor: Colors.haldiYellow,
-    padding: 18,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  secondaryButton: {
-    borderWidth: 2,
-    borderColor: Colors.warmCream,
-    padding: 18,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: Colors.woodDark,
-    padding: 30,
-    borderRadius: 20,
-    width: '80%',
-    borderWidth: 1,
-    borderColor: Colors.woodMid,
-  },
-  input: {
-    backgroundColor: Colors.inkBlack,
-    color: Colors.warmCream,
-    padding: 12,
-    borderRadius: 10,
-    marginTop: 20,
-    marginBottom: 20,
-    fontSize: 16,
-  },
+  container: { flex: 1, backgroundColor: Colors.earthBrown, alignItems: 'center', justifyContent: 'center', padding: 20 },
+  subtitle: { ...Typography.body, color: Colors.mutedText, marginTop: 8 },
+  actions: { width: '100%', marginTop: 60 },
+  playingAs: { ...Typography.body, color: Colors.mutedText, textAlign: 'center', marginBottom: 16 },
+  primaryButton: { backgroundColor: Colors.haldiYellow, padding: 18, borderRadius: 12, alignItems: 'center', marginBottom: 16 },
+  secondaryButton: { borderWidth: 2, borderColor: Colors.warmCream, padding: 18, borderRadius: 12, alignItems: 'center' },
+  rulesButton: { marginTop: 20, alignItems: 'center' },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center' },
+  modalContent: { backgroundColor: Colors.woodDark, padding: 30, borderRadius: 20, width: '85%', borderWidth: 1, borderColor: Colors.woodMid },
+  input: { backgroundColor: Colors.inkBlack, color: Colors.warmCream, padding: 12, borderRadius: 10, marginTop: 20, marginBottom: 20, fontSize: 16 },
+  ruleItem: { ...Typography.body, color: Colors.warmCream, marginBottom: 15, lineHeight: 22 },
 });
 
 export default HomeScreen;
