@@ -17,5 +17,6 @@ COPY backend/ .
 # Copy the built frontend from Stage 1 into a 'static' folder in backend
 COPY --from=build-stage /frontend/dist ./static
 
-EXPOSE 8000
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Hugging Face Spaces use port 7860 by default
+EXPOSE 7860
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]

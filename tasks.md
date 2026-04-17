@@ -33,9 +33,9 @@
 
 ## E. Resilience and Edge Cases
 - [x] Host migration when host disconnects
-- [/] Auto-skip disconnected players in active game
+- [x] Auto-skip disconnected players in active game
 - [x] Room cleanup on empty room
-- [ ] Reconnect support contract for clients
+- [x] Reconnect support contract for clients
 - [x] Server-side validation for invalid bids/cards
 
 ## F. Frontend Functional Baseline (React Native)

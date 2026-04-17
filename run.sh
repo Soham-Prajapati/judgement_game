@@ -1,18 +1,19 @@
 #!/bin/bash
 
-# Project Judgement - The "Simulator-Ready" Runner
+# Project Judgement - The "Free Forever" Ultimate Runner
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-echo -e "${BLUE}=== Project Judgement Control Center ===${NC}"
+echo -e "${BLUE}=== Project Judgement Final Control Center ===${NC}"
 
 # 1. Choose Action
 echo -e "\nWhat would you like to do?"
 echo "1) Start Local Backend Server (FastAPI)"
-echo "2) Run Locally (Best for SIMULATOR/WiFi)"
-echo "3) Run Global (Connect to Railway)"
+echo "2) Run App Locally (WiFi/Simulator)"
+echo -e "${GREEN}3) DEPLOY TO HUGGING FACE (Free Forever Hosting)${NC}"
+echo "4) Build APK for Phone (Cloud Build)"
 echo "q) Quit"
 read -p "Selection: " choice
 
@@ -21,18 +22,32 @@ case $choice in
         cd backend && source venv/bin/activate && python3 main.py
         ;;
     2)
-        # Use localhost for Simulator, fallback to IP for WiFi
-        echo -e "${GREEN}[*] Configuring for Local Simulator/WiFi...${NC}"
-        # We set it to localhost because iPhone simulator shares Mac network
-        sed -i '' "s|apiBaseUrl: '.*'|apiBaseUrl: 'http://localhost:8000'|g" frontend/src/core/constants.ts
-        sed -i '' "s|wsBaseUrl: '.*'|wsBaseUrl: 'ws://localhost:8000'|g" frontend/src/core/constants.ts
+        IP=$(ipconfig getifaddr en0)
+        sed -i '' "s|apiBaseUrl: '.*'|apiBaseUrl: 'http://$IP:8000'|g" frontend/src/core/constants.ts
+        sed -i '' "s|wsBaseUrl: '.*'|wsBaseUrl: 'ws://$IP:8000'|g" frontend/src/core/constants.ts
         cd frontend && npx expo start --lan -c
         ;;
     3)
-        echo -e "${GREEN}[*] Connecting to RAILWAY Server...${NC}"
-        sed -i '' "s|apiBaseUrl: '.*'|apiBaseUrl: 'https://judgementgame-production.up.railway.app'|g" frontend/src/core/constants.ts
-        sed -i '' "s|wsBaseUrl: '.*'|wsBaseUrl: 'wss://judgementgame-production.up.railway.app'|g" frontend/src/core/constants.ts
-        cd frontend && npx expo start --tunnel -c
+        read -p "Enter your Hugging Face Space URL (e.g. hf.co/spaces/user/name): " URL
+        # Logic to convert URL to sub-domain format if needed
+        # Format: user-name.hf.space
+        # We can extract it from the URL or just ask the user for the "Direct Link"
+        echo -e "${BLUE}[*] Tip: Use the 'Direct Link' from your HF Space settings.${NC}"
+        read -p "Enter your HF Direct Domain (e.g. user-name.hf.space): " DOMAIN
+        
+        sed -i '' "s|apiBaseUrl: '.*'|apiBaseUrl: 'https://$DOMAIN'|g" frontend/src/core/constants.ts
+        sed -i '' "s|wsBaseUrl: '.*'|wsBaseUrl: 'wss://$DOMAIN'|g" frontend/src/core/constants.ts
+        
+        echo -e "${GREEN}[*] Constants updated to Hugging Face URL.${NC}"
+        git add .
+        git commit -m "deploy: final configuration for hugging face global play"
+        git push origin main
+        echo -e "\n${GREEN}=== PUSH COMPLETE ===${NC}"
+        echo "Railway is now building your game."
+        echo "Check your HF Space. It will be live in ~2 minutes!"
+        ;;
+    4)
+        cd frontend && eas build -p android --profile preview
         ;;
     q)
         exit 0
