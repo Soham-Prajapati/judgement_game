@@ -8,10 +8,33 @@ import json
 import os
 
 ROOM_TTL = int(os.getenv("ROOM_TTL_SECONDS", 7200))
+MAX_CARDS_IN_PEAK = 7 # The "top" of the U-Turn
 
-async def start_game(room_code: str, round_num: int = 1, cards_per_player: int = 7):
+async def get_cards_for_round(round_num: int) -> int:
+    """
+    Calculates cards to deal based on U-Turn logic:
+    1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1
+    """
+    if round_num <= MAX_CARDS_IN_PEAK:
+        return round_num
+    else:
+        # After peak, decrease. 
+        # e.g. round 8 returns 6, round 9 returns 5...
+        diff = round_num - MAX_CARDS_IN_PEAK
+        val = MAX_CARDS_IN_PEAK - diff
+        return max(val, 1)
+
+async def start_game(room_code: str, round_num: int = 1):
     players = await redis_client.lrange(f"room:{room_code}:players", 0, -1)
     num_players = len(players)
+    
+    cards_per_player = await get_cards_for_round(round_num)
+    
+    # Safety check: 52 cards total. 8 players * 6 cards = 48.
+    # If 8 players, we can't do 7 cards (56).
+    if num_players * cards_per_player > 52:
+        cards_per_player = 52 // num_players
+
     deck = create_deck()
     shuffle_deck(deck)
     hands, _ = deal_cards(deck, num_players, cards_per_player)
@@ -40,26 +63,6 @@ async def start_game(room_code: str, round_num: int = 1, cards_per_player: int =
         "hands": {u: json.loads(h) for u, h in hands_dict.items()},
         "players": players
     }
-
-async def handle_disconnect_during_turn(room_code: str, username: str):
-    """
-    If a player leaves during their turn, auto-play for them (bid 0 or play first card).
-    Returns a turn update event if needed.
-    """
-    meta = await redis_client.hgetall(f"room:{room_code}:meta")
-    players = await redis_client.lrange(f"room:{room_code}:players", 0, -1)
-    if not players: return None
-
-    status = meta.get("status")
-    
-    if status == "bidding":
-        curr_idx = int(meta.get("current_bidder_idx", 0))
-        # If we just removed a player, we need to be careful with the index
-        # For simplicity, if the game is in progress, we auto-bid 0 for them
-        # and move the index.
-        pass # Logic handled in websocket disconnect for now
-
-    return None
 
 async def place_bid(room_code: str, username: str, bid: int):
     players = await redis_client.lrange(f"room:{room_code}:players", 0, -1)
@@ -158,7 +161,9 @@ async def calculate_round_end(room_code: str, players: list):
     round_num = int(meta["round_num"])
     await redis_client.hset(f"room:{room_code}:history:{round_num}", mapping=round_scores)
     
-    if round_num >= 7:
+    # Game Over if we finished the "down" part of the U-Turn
+    # If peak is 7, total rounds = 13
+    if round_num >= (MAX_CARDS_IN_PEAK * 2 - 1):
         await redis_client.hset(f"room:{room_code}:meta", "status", "game_over")
         winner = max(total_scores, key=lambda k: int(total_scores[k]))
         return {"round_num": round_num, "round_scores": round_scores, "total_scores": total_scores, "game_over": True, "winner": winner}
@@ -169,9 +174,9 @@ async def calculate_round_end(room_code: str, players: list):
 async def start_next_round(room_code: str):
     meta = await redis_client.hgetall(f"room:{room_code}:meta")
     round_num = int(meta["round_num"]) + 1
-    return await start_game(room_code, round_num, 7 - (round_num - 1))
+    return await start_game(room_code, round_num)
 
 async def reset_game(room_code: str):
     await redis_client.delete(f"room:{room_code}:total_scores")
-    for i in range(1, 8): await redis_client.delete(f"room:{room_code}:history:{i}")
-    return await start_game(room_code, 1, 7)
+    for i in range(1, 20): await redis_client.delete(f"room:{room_code}:history:{i}")
+    return await start_game(room_code, 1)

@@ -1,7 +1,7 @@
 export const AppConstants = {
   // Hardcoded for your convenience
-  apiBaseUrl: 'https://judgementgame-production.up.railway.app',
-  wsBaseUrl: 'wss://judgementgame-production.up.railway.app',
+  apiBaseUrl: 'http://10.10.221.199:8000',
+  wsBaseUrl: 'ws://10.10.221.199:8000',
 
   storageKeys: {
     username: 'player_username',

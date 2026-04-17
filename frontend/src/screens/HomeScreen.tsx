@@ -34,7 +34,7 @@ const HomeScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       <Text style={Typography.display}>JUDGEMENT</Text>
-      <Text style={styles.subtitle}>Kachuful • 2-6 Players</Text>
+      <Text style={styles.subtitle}>Kachuful • Up to 8 Players</Text>
 
       <View style={styles.actions}>
         <Text style={styles.playingAs}>Playing as: {username || 'Guest'}</Text>
@@ -75,7 +75,7 @@ const HomeScreen = ({ navigation }: any) => {
           <View style={[styles.modalContent, { height: '70%' }]}>
             <Text style={Typography.h2}>The Rules</Text>
             <ScrollView style={{ marginTop: 20 }}>
-              <Text style={styles.ruleItem}>🎴 7 Rounds: Starts with 7 cards, ends with 1.</Text>
+              <Text style={styles.ruleItem}>🔄 The U-Turn: Game starts with 1 card, goes up to 7, then back down to 1.</Text>
               <Text style={styles.ruleItem}>🎺 Trump Suit: Rotates every round (♠️ ➡️ ♦️ ➡️ ❤️ ➡️ ♣️).</Text>
               <Text style={styles.ruleItem}>⚖️ Bidding: Predict exactly how many tricks you will win.</Text>
               <Text style={styles.ruleItem}>🚫 The Constraint: The last bidder cannot bid a number that makes the total bids equal to the cards dealt.</Text>
