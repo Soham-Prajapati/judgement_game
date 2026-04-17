@@ -3,8 +3,8 @@ export const AppConstants = {
   // If empty, the build script will prompt for it.
   productionUrl: '', 
   
-  apiBaseUrl: 'http://10.10.214.178:8000',
-  wsBaseUrl: 'ws://10.10.214.178:8000',
+  apiBaseUrl: 'judgementgame-production.up.railway.app',
+  wsBaseUrl: 'ws://judgementgame-production.up.railway.app',
 
   storageKeys: {
     username: 'player_username',
