@@ -9,6 +9,7 @@ venv/
 
 # Node / React Native
 node_modules/
+frontend/dist/
 *.log
 android/app/build/
 ios/build/
