@@ -1,3 +1,12 @@
+---
+title: Project Judgement (Kachuful)
+emoji: "🃏"
+colorFrom: green
+colorTo: blue
+sdk: docker
+pinned: false
+---
+
 # Project Judgement (Kachuful)
 
 A real-time multiplayer mobile card game built with Expo (React Native) and FastAPI.
